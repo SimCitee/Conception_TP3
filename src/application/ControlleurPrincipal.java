@@ -14,7 +14,7 @@ public class ControlleurPrincipal {
 	
 		ConsoleHelper.printScreenSeparator("Accueil");
 		System.out.println("1. Gestion des locations");
-		System.out.println("2. Gestion des véhicules");
+		System.out.println("2. Gestion des vehicules");
 		System.out.println("3. Gestion des clients");
 		
 		do{

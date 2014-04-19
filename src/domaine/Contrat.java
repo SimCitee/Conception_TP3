@@ -1,26 +1,30 @@
-package modele;
+package domaine;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Contrat {
-	private Client signataire;
-	private Vehicule vehicule;
-	private Etat etat;
-	private Paiement paiement;
-	private Date dateDebut;
-	private Date dateFin;
-	private boolean actif;
+	private Client signataire;				// client associe au contrat
+	private Vehicule vehicule;				// vehicule associe au contrat
+	private Etat etat;						// location ou reservation
+	private Date dateDebut;					// date ou debute le contrat
+	private Date dateFin;					// date ou prend fin le contrat
+	private boolean actif;					// indique si le contrat est actif ou termine
+	private int MNT_DEPOT_GARANTIE = 200;	// montant du depot de garantie
+	private ArrayList<Paiement> listePaiements;	// contient la liste des paiements effectues sur ce contrat
 	
 	/*
 	 * Calcul du total de la facture (fait au moment de la location)
 	 * Parametre : aucun
 	 * Valeur de retour : aucune
 	 */
-	public void calculerTotalFacture() {
+	public int calculerTotalFacture() {
 		
-		int n = vehicule.getTauxQuotidien() * getJourLocation();
+		int total = vehicule.getTauxQuotidien() * getJourLocation();
+		
+		return total;
 	}
-	
+	 
 	/*
 	 * Modifier les dates de debut et fin de la location
 	 * Parametre : date du debut / date de fin de location
@@ -85,12 +89,22 @@ public class Contrat {
 	public void setEtat(Etat etat) {
 		this.etat = etat;
 	}
-	public Paiement getPaiement() {
-		return paiement;
+	public Vehicule getVehicule() {
+		return vehicule;
 	}
-	public void setPaiement(Paiement paiement) {
-		this.paiement = paiement;
+
+	public void setVehicule(Vehicule vehicule) {
+		this.vehicule = vehicule;
 	}
+
+	public ArrayList<Paiement> getListePaiements() {
+		return listePaiements;
+	}
+
+	public void setListePaiements(ArrayList<Paiement> listePaiements) {
+		this.listePaiements = listePaiements;
+	}
+
 	public Date getDateDebut() {
 		return dateDebut;
 	}

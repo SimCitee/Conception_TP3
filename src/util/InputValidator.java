@@ -3,7 +3,7 @@ package util;
 public class InputValidator {
 	
 	/**
-     * V�rifie si un string peut �tre convertit en entier
+     * Verifie si un string peut etre convertit en entier
      */
 	public static boolean stringIsInteger(String str)
 	{
@@ -21,7 +21,7 @@ public class InputValidator {
 	}
 	
 	/**
-     * �value si un entier est compris dans une plage
+     * Evalue si un entier est compris dans une plage
      * 
      */
 	public static boolean evalRange(int number, int start, int end)

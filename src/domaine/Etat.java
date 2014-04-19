@@ -1,4 +1,4 @@
-package modele;
+package domaine;
 
 public abstract class Etat {
 

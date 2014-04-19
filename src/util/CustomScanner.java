@@ -10,7 +10,7 @@ public class CustomScanner {
 	private Scanner scanner = null;
 	private static CustomScanner instance;
 	
-	//Constructeur priv� (singleton)
+	//Constructeur prive (singleton)
 	private CustomScanner()
 	{
 		scanner = new Scanner(System.in);
@@ -32,7 +32,7 @@ public class CustomScanner {
 		return scanner.nextLine();
 	}
 	
-	//Cette classe (singleton) une instance de cr��
+	//Cette classe (singleton) une instance de cree
 	public static boolean isInstanceCreated()
 	{
 		if(instance == null)

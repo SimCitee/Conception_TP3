@@ -6,9 +6,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import modele.Catalogue;
-import modele.TypeVehicule;
-import modele.Vehicule;
+import domaine.Catalogue;
+import domaine.TypeVehicule;
+import domaine.Vehicule;
+
 import util.ConsoleHelper;
 import util.ConsoleTableLayout;
 import util.CustomScanner;
@@ -23,10 +24,10 @@ public class ControlleurVehicules {
 		CustomScanner userInputScanner = CustomScanner.getInstance();
 	
 		ConsoleHelper.printScreenSeparator("Accueil");
-		System.out.println("1. Afficher les véhicules");
-		System.out.println("2. Ajouter un véhicule");
-		System.out.println("3. Modifier un véhicule");
-		System.out.println("4. Supprimer un véhicule");
+		System.out.println("1. Afficher les vehicules");
+		System.out.println("2. Ajouter un vehicule");
+		System.out.println("3. Modifier un vehicule");
+		System.out.println("4. Supprimer un vehicule");
 		System.out.println("0. retour");
 		
 		do{
@@ -215,7 +216,7 @@ public class ControlleurVehicules {
 		return cote;
 	}
 	
-	//Demande à l'utilisateur la marque du véhicule
+	//Demande a l'utilisateur la marque du véhicule
 	private static String getMarque()
 	{
 		return userInputScanner.getUserInput("Marque (ex. Honda, Ford,...)) : ");
@@ -300,7 +301,7 @@ public class ControlleurVehicules {
 			}
 			else
 			{
-				System.out.println("Choix invalide. Le nombre doit être un entier");
+				System.out.println("Choix invalide. Le nombre doit etre un entier");
 			}
 			
 		} while(true);
@@ -314,7 +315,7 @@ public class ControlleurVehicules {
 		
 	}
 	
-	//Demande à l'utilisateur les accessoires du véhicule
+	//Demande a l'utilisateur les accessoires du véhicule
 	private static ArrayList<String> getAccessoires()
 	{
 		String accessoires;				//Input utilisateur
@@ -376,7 +377,7 @@ public class ControlleurVehicules {
 		ConsoleTableLayout layout = new ConsoleTableLayout(15, 15, 15, 15, 15, 15, 15, 15, 15, 15);
 		
 		//En-tête du tableau
-		layout.newLine("Identifiant", "Cote", "Marque", "Modèle", "Force moteur", 
+		layout.newLine("Identifiant", "Cote", "Marque", "Modele", "Force moteur", 
 				"Transmission", "Nb. places", "Immatriculation", "Disponible", "Accessoires");
 		
 		
