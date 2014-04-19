@@ -3,28 +3,50 @@ package domaine;
 import java.util.ArrayList;
 import java.util.Date;
 
+import service.DateUtils;
+
 public class Contrat {
-	private Client signataire;				// client associe au contrat
-	private Vehicule vehicule;				// vehicule associe au contrat
-	private Etat etat;						// location ou reservation
-	private Date dateDebut;					// date ou debute le contrat
-	private Date dateFin;					// date ou prend fin le contrat
-	private boolean actif;					// indique si le contrat est actif ou termine
-	private int MNT_DEPOT_GARANTIE = 200;	// montant du depot de garantie
-	private ArrayList<Paiement> listePaiements;	// contient la liste des paiements effectues sur ce contrat
+	private Client signataire;	// personne qui signe le contrat
+	private Vehicule vehicule;	// vehicule associe au contrat
+	private Etat etat;			// etat du contrat (location ou reservation) 
+	private Date dateDebut;		// date ou le contrat sera effectif
+	private Date dateFin;		// date ou se termine le contrat
+	private boolean actif;		// indique si le contrat est effectif
+	private ArrayList<Paiement> listePaiements;	// liste des paiements effectuees sur ce contrat
+	private double depotGarantie;	// montant du depot de garantie
+	
+	//Constructeur
+	public Contrat(Client c, Vehicule v, Date debut, Date fin) {
+		this.signataire = c;
+		this.vehicule = v;
+		this.dateDebut = debut;
+		this.dateFin = fin;
+		this.actif = true;
+		
+		// Si la date correspond a aujourd'hui, creer une location
+		if (DateUtils.isToday(debut)) 
+			this.etat = new Location(v.getKilometrage());
+		// sinon, reservation
+		else
+			this.etat = new Reservation();
+		
+		// creer le paiment initial du contrat
+		// on suppose le paiement acquitte
+		Paiement paiementInitial = new Paiement(calculerTotalFacture(), "Paiement initial (incluant le depot de garantie)", true);
+		listePaiements.add(paiementInitial);
+	} 
 	
 	/*
 	 * Calcul du total de la facture (fait au moment de la location)
 	 * Parametre : aucun
 	 * Valeur de retour : aucune
 	 */
-	public int calculerTotalFacture() {
-		
-		int total = vehicule.getTauxQuotidien() * getJourLocation();
+	public double calculerTotalFacture() {
+		double total = vehicule.getTauxQuotidien() * getJourLocation()  * getDepotGarantie();
 		
 		return total;
 	}
-	 
+	
 	/*
 	 * Modifier les dates de debut et fin de la location
 	 * Parametre : date du debut / date de fin de location
@@ -42,6 +64,29 @@ public class Contrat {
 	 */
 	public void modifierVehicule(Vehicule vehiculeChoisi) {
 		this.vehicule = vehiculeChoisi;
+	}
+	
+	/*
+	 * Assigne un nouveau vehicule et de nouvelles dates au contrat
+	 * Parametre : le nouveau vehicule et les nouvelles dates
+	 * Valeur de retour : aucune
+	 */
+	public void modifierVehiculeEtDate(Vehicule vehiculeChoisi, Date debut, Date fin) {
+		this.vehicule = vehiculeChoisi;
+		this.dateDebut = debut;
+		this.dateFin = fin;
+	}
+	
+	/*
+	 * Ajoute un paiement a la liste
+	 * Parametre : montant, raison du paiement, est acquitte ou non
+	 * Valeur de retour : aucune
+	 */
+	public void ajouterPaiement(double montant, String raison, boolean acquitte) {
+		if(!raison.equalsIgnoreCase("")) {
+			Paiement nouveauPaiement = new Paiement(montant, raison, acquitte);
+			listePaiements.add(nouveauPaiement);
+		}
 	}
 	
 	/*
@@ -77,17 +122,12 @@ public class Contrat {
 
 	}
 	
+	// Getters & setters
 	public Client getSignataire() {
 		return signataire;
 	}
 	public void setSignataire(Client signataire) {
 		this.signataire = signataire;
-	}
-	public Etat getEtat() {
-		return etat;
-	}
-	public void setEtat(Etat etat) {
-		this.etat = etat;
 	}
 	public Vehicule getVehicule() {
 		return vehicule;
@@ -97,14 +137,18 @@ public class Contrat {
 		this.vehicule = vehicule;
 	}
 
+	public Etat getEtat() {
+		return etat;
+	}
+	public void setEtat(Etat etat) {
+		this.etat = etat;
+	}
 	public ArrayList<Paiement> getListePaiements() {
 		return listePaiements;
 	}
-
 	public void setListePaiements(ArrayList<Paiement> listePaiements) {
 		this.listePaiements = listePaiements;
 	}
-
 	public Date getDateDebut() {
 		return dateDebut;
 	}
@@ -122,6 +166,14 @@ public class Contrat {
 	}
 	public void setActif(boolean actif) {
 		this.actif = actif;
+	}
+
+	public double getDepotGarantie() {
+		return depotGarantie;
+	}
+
+	public void setDepotGarantie(double depotGarantie) {
+		this.depotGarantie = depotGarantie;
 	}
 	
 }

@@ -1,4 +1,4 @@
-package util;
+package service;
 import java.util.Scanner;
 /*
  * Contient une encapsulation de la classe Scanner de java.

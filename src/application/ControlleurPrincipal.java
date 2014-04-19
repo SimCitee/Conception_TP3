@@ -1,9 +1,9 @@
 package application;
 
 
-import util.ConsoleHelper;
-import util.InputValidator;
-import util.CustomScanner;
+import service.ConsoleHelper;
+import service.CustomScanner;
+import service.InputValidator;
 
 public class ControlleurPrincipal {
 	

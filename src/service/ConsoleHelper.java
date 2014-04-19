@@ -1,4 +1,4 @@
-package util;
+package service;
 
 /*
  * Contient des m�thodes pour aider la g�n�ration des interfaces

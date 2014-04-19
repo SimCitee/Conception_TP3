@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import application.ControlleurClient;
 import application.ControlleurLocation;
 import application.ControlleurVehicules;
 
@@ -199,7 +200,7 @@ public class Interface {
 			System.out.print("Veuillez entrer le numero de permis de conduire du client (entrer 0 pour annuler): ");
 			input = lecture();
 			
-			c = ControlleurLocation.obtenirClient(input);
+			c = ControlleurClient.obtenirClient(input);
 		} while (c == null && !input.equalsIgnoreCase("0"));
 		
 		return c;

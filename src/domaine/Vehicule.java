@@ -7,6 +7,7 @@ public class Vehicule {
 	
 	private Integer identifiant;
 	private Integer coteClassification;
+	private Integer kilometrage;
 	private String marque;
 	private String modele;
 	private Integer forceMoteur;
@@ -41,6 +42,14 @@ public class Vehicule {
 		this.coteClassification = coteClassification;
 	}
 	
+	public Integer getKilometrage() {
+		return kilometrage;
+	}
+
+	public void setKilometrage(Integer kilometrage) {
+		this.kilometrage = kilometrage;
+	}
+
 	//Retourne le type de véhicule (String) en fonction de sa cote
 	public String getTypeVehicule()
 	{
