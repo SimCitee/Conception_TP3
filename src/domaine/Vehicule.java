@@ -3,8 +3,8 @@ package domaine;
 import java.util.ArrayList;
 
 public class Vehicule {
-	private int tauxQuotidien;
 	
+	private int tauxQuotidien = 40;	// a changer
 	private Integer identifiant;
 	private Integer coteClassification;
 	private Integer kilometrage;

@@ -42,5 +42,13 @@ public class Paiement {
 		this.estAcquitte = estAcquitte;
 	}
 	
-	
+	@Override
+	public String toString() {
+		
+		String str = (this.estAcquitte) ? "oui" : "non";
+		
+		return "Montant : " + montant + ", " +
+				"Details : " + details + ", " +
+				"Est payee : " + str + " ||";
+	}
 }

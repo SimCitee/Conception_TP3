@@ -14,6 +14,7 @@ import service.ConsoleHelper;
 import service.ConsoleTableLayout;
 import service.CustomScanner;
 import service.InputValidator;
+import ui.Interface;
 
 public class ControlleurVehicules {
 	
@@ -44,7 +45,7 @@ public class ControlleurVehicules {
 		{
 			
 			case 0 :
-				ControlleurPrincipal.fenetrePrincipale();
+				Interface.menuPrincipal();
 				break;
 			
 			case 1 :
@@ -335,14 +336,14 @@ public class ControlleurVehicules {
 	}
 	
 	//Demande à l'utilisateur de choisir un véhicule dans la liste en fonction de son identifiant
-	private static Vehicule getVehiculeSelonIdentifiant()
+	public static Vehicule getVehiculeSelonIdentifiant()
 	{
 		Catalogue catalogue = Catalogue.getInstance();
 		String identifiantStr;
 		Vehicule vehicule = null;
 		do
 		{
-			identifiantStr = userInputScanner.getUserInput("\nChoisir un identifiant de véhicule (0 pour quitter)");
+			identifiantStr = userInputScanner.getUserInput("\nChoisir un identifiant de vehicule (0 pour quitter)");
 			
 			//L'utilisateur annule l'opération
 			if(identifiantStr.equals("0"))
@@ -360,7 +361,7 @@ public class ControlleurVehicules {
 			}
 			else
 			{
-				System.out.println("L'identifiant du véhicule doit être un entier!");
+				System.out.println("L'identifiant du vehicule doit etre un entier!");
 			}
 		
 		}while(true);

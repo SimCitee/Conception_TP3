@@ -6,16 +6,15 @@ import java.util.Date;
 //Singleton
 public class RegistreContrat {
 	private static RegistreContrat _instance;
-	private ArrayList<Contrat> listeContrats;
-	private final int MNT_DEPOT_GARANTIE = 200;	// montant du depot de garantie
+	private static ArrayList<Contrat> listeContrats;
 	
 	private RegistreContrat() {
-		listeContrats = new ArrayList<Contrat>();
 	}
 	
 	public static RegistreContrat getInstance() {
 		if (_instance == null) {
 			_instance = new RegistreContrat();
+			listeContrats = new ArrayList<Contrat>();
 		}
 		
 		return _instance;
@@ -37,5 +36,18 @@ public class RegistreContrat {
 	public void faireContrat(Client client, Vehicule vehicule, Date debut, Date fin) {
 		Contrat nouvContrat = new Contrat(client,vehicule,debut,fin);
 		listeContrats.add(nouvContrat);
+	}
+	
+	/*
+	 * Parcours les contrats jusqu'a ce l'on celui au numero correspondant
+	 * Parametre: numero du contrat
+	 * Valeur de retour: le contrat recherche
+	 */
+	public static Contrat rechercherContrat(String noContrat) {
+		for(Contrat c : listeContrats)
+			if (c.getNoContrat() == Integer.parseInt(noContrat))
+				return c;
+		
+		return null;
 	}
 }

@@ -1,5 +1,6 @@
 package application;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import domaine.Client;
@@ -17,16 +18,29 @@ public class ControlleurLocation {
 	
 	public static void modifierLocation(Contrat contrat, Date dateDebut, Date dateFin) {
 		contrat.modifierDates(dateDebut, dateFin);
-		contrat.ajouterPaiement(contrat.calculerTotalFacture(), "Modification de contrat", false);
+		contrat.ajouterPaiement(contrat.calculerTotalFacture() + contrat.FRAIS_MODIFICATION, "Modification de contrat", false);
 	}
 	
 	public static void modifierLocation(Contrat contrat, Vehicule vehicule) {
 		contrat.modifierVehicule(vehicule);
-		contrat.ajouterPaiement(contrat.calculerTotalFacture(), "Modification de contrat", false);
+		contrat.ajouterPaiement(contrat.calculerTotalFacture() + contrat.FRAIS_MODIFICATION, "Modification de contrat", false);
 	}
 	
 	public static void modifierLocation(Contrat contrat, Vehicule vehicule, Date dateDebut, Date dateFin) {
 		contrat.modifierVehicule(vehicule);
-		contrat.ajouterPaiement(contrat.calculerTotalFacture(), "Modification de contrat", false);
+		contrat.modifierDates(dateDebut, dateFin);
+		contrat.ajouterPaiement(contrat.calculerTotalFacture() + contrat.FRAIS_MODIFICATION, "Modification de contrat", false);
+	}
+	
+	public static void terminerLocation(Contrat contrat) {
+		contrat.changerStatut();
+	}
+	
+	public static Contrat obtenirContrat(String noContrat) {
+		return regContrat.rechercherContrat(noContrat);
+	}
+	
+	public static ArrayList<Contrat> obtenirListeContrats() {
+		return regContrat.getListeContrats();
 	}
 }

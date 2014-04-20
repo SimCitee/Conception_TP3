@@ -6,22 +6,37 @@ import java.util.Date;
 import service.DateUtils;
 
 public class Contrat {
+	private static int compteurContrat = 0;
+	private int noContrat;		// numero du contrat
 	private Client signataire;	// personne qui signe le contrat
 	private Vehicule vehicule;	// vehicule associe au contrat
 	private Etat etat;			// etat du contrat (location ou reservation) 
 	private Date dateDebut;		// date ou le contrat sera effectif
 	private Date dateFin;		// date ou se termine le contrat
+	private Date dateRemise;	// date ou a ete remis le vehicule
 	private boolean actif;		// indique si le contrat est effectif
 	private ArrayList<Paiement> listePaiements;	// liste des paiements effectuees sur ce contrat
-	private double depotGarantie;	// montant du depot de garantie
+	private double depotGarantie;	// montant du depot de garantie a la creation du contrat
+	private DegatVehicule degat;	// contient les details des degats effectues au vehicule (s'il y a lieu)
+	
+	public final int MNT_DEPOT_GARANTIE = 200;	// montant du depot de garantie
+	public final int FRAIS_MODIFICATION = 10;	// frais de modification du contrat
+	public final int MAX_KILO_GRATUIT = 100;	// indique le nombre de kilometre gratuit
+	public final double FRAIS_DEPASSEMENT_KILO = 0.25;	// montant pour chaque kilometre depasse les kilometre gratuit
+	public final int FRAIS_DEPASSEMENT_HEURE = 2;	// montant a l'heure pour la 1ere journee depasse la date de fin
+	public final int FRAIS_DEPASSEMENT_JOUR = 75;	// montant par jour pour les autres jours depasse le 1er apres la date de fin
 	
 	//Constructeur
 	public Contrat(Client c, Vehicule v, Date debut, Date fin) {
+		this.noContrat = ++compteurContrat;
 		this.signataire = c;
 		this.vehicule = v;
 		this.dateDebut = debut;
 		this.dateFin = fin;
 		this.actif = true;
+		this.depotGarantie = MNT_DEPOT_GARANTIE;
+		this.degat = null;
+		this.listePaiements = new ArrayList<Paiement>();
 		
 		// Si la date correspond a aujourd'hui, creer une location
 		if (DateUtils.isToday(debut)) 
@@ -42,7 +57,10 @@ public class Contrat {
 	 * Valeur de retour : aucune
 	 */
 	public double calculerTotalFacture() {
-		double total = vehicule.getTauxQuotidien() * getJourLocation()  * getDepotGarantie();
+		int tauxQuotidien = vehicule.getTauxQuotidien();
+		int joursLocation = getJourLocation(); 
+		double depotGarantie = getDepotGarantie();
+		double total =  (tauxQuotidien * joursLocation) + depotGarantie;
 		
 		return total;
 	}
@@ -122,6 +140,39 @@ public class Contrat {
 
 	}
 	
+	/*
+	 * Calcul des frais supplementaires du contrat
+	 * Parametre: aucun
+	 * Valeur de retour: aucune
+	 */
+	public void calculerFraisSupplementaire() {
+		int montantDegat = (degat != null) ? degat.getMontantDegat() : 0;
+		int totalKiloGratuit = getJourLocation() * MAX_KILO_GRATUIT;
+		int intevalleKilo = ((Location) etat).getIntervalleKilometrage();
+		long totalRetard = 0;
+		long intervalleFinRemise = DateUtils.getDayInterval(getDateFin(), getDateRemise());
+		double totalMontantKilo = 0;
+		double fraisSupplementaire = 0;
+		
+		if (intervalleFinRemise > 1)
+			totalRetard = (DateUtils.getDayInterval(getDateFin(), getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
+		else if (intervalleFinRemise == 1)
+			totalRetard = (DateUtils.getHourInterval(getDateFin(), getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
+		
+		if (totalKiloGratuit > intevalleKilo) {
+			int differenceKilo = intevalleKilo - totalKiloGratuit;
+			totalMontantKilo = differenceKilo * FRAIS_DEPASSEMENT_KILO;
+		}
+		
+		fraisSupplementaire = totalRetard + totalMontantKilo + montantDegat;
+		
+		// S'il y a des frais supplementaires, ajouter un paiement
+		if (fraisSupplementaire > 0) {
+			Paiement paiementFrais = new Paiement(fraisSupplementaire, "Frais supplementaire", false);
+			listePaiements.add(paiementFrais);
+		}
+	}
+	
 	// Getters & setters
 	public Client getSignataire() {
 		return signataire;
@@ -155,6 +206,22 @@ public class Contrat {
 	public void setDateDebut(Date dateDebut) {
 		this.dateDebut = dateDebut;
 	}
+	public Date getDateRemise() {
+		return dateRemise;
+	}
+
+	public void setDateRemise(Date dateRemise) {
+		this.dateRemise = dateRemise;
+	}
+
+	public DegatVehicule getDegat() {
+		return degat;
+	}
+
+	public void setDegat(DegatVehicule degat) {
+		this.degat = degat;
+	}
+
 	public Date getDateFin() {
 		return dateFin;
 	}
@@ -174,6 +241,34 @@ public class Contrat {
 
 	public void setDepotGarantie(double depotGarantie) {
 		this.depotGarantie = depotGarantie;
+	}
+
+	public int getNoContrat() {
+		return noContrat;
+	}
+
+	public void setNoContrat(int noContrat) {
+		this.noContrat = noContrat;
+	}
+	
+	@Override
+	public String toString() {
+		
+		String strRemise = (dateRemise == null) ? "aucune" : dateRemise.toString();
+		String strDegat = (degat == null) ? "aucun" : degat.toString();
+		
+		return "No. contrat: " + this.noContrat + "\n" +
+				"Signataire: " + this.signataire.getNomComplet() + "\n" +
+				"Details vehicule: " + this.vehicule.toString() + "\n" +
+				"Details etat: " + etat.toString() + "\n" +
+				"Date debut: " + this.dateDebut.toString() + "\n" +
+				"Date fin: " + this.dateFin.toString() + "\n" +
+				"Date remise: " + strRemise + "\n" +
+				"Est actif: " + this.actif + "\n" +
+				"Depot garantie:" + this.depotGarantie + "\n" +
+				"Details paiement: " + listePaiements.toString() + "\n" +
+				"Degat vehicule: " + strDegat;
+				
 	}
 	
 }

@@ -8,6 +8,16 @@ public class Location extends Etat {
 		this.kilometrageDepart = kilometrage;
 	}
 	
+	/*
+	 * Retourne le kilometrage effectuer entre le debut et la fin de la location
+	 * Parametre: aucun
+	 * Valeur de retour: intervalle
+	 */
+	public int getIntervalleKilometrage() {
+		return kilometrageArrivee - kilometrageDepart;
+	}
+	
+	
 	//Getters & setters
 	public int getKilometrageDepart() {
 		return kilometrageDepart;
@@ -23,5 +33,13 @@ public class Location extends Etat {
 
 	public void setKilometrageArrivee(int kilometrageArrivee) {
 		this.kilometrageArrivee = kilometrageArrivee;
+	}
+	
+	@Override
+	public String toString() {
+		return "Location [" +
+				"kilometrageDepart=" + this.kilometrageDepart + ", " +
+				"kilometrageArrivee=" + this.kilometrageArrivee +
+				"]";
 	}
 }

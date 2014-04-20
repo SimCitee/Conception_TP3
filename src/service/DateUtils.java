@@ -1,5 +1,7 @@
 package service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -251,5 +253,54 @@ public class DateUtils {
 
     /** The maximum date possible. */
     public static Date MAX_DATE = new Date(Long.MAX_VALUE);
+    
+    public static long getHourInterval(Date date1, Date date2) {
+   
+  		try {
+   
+  			//in milliseconds
+  			long diff = date2.getTime() - date1.getTime();
+  			long diffHours = diff / (60 * 60 * 1000) % 24;
+  			return diffHours;
+   
+  		} catch (Exception e) {
+  			e.printStackTrace();
+  		}
+		return -1;
+    }
+    
+    public static long getDayInterval(Date date1, Date date2) {
+    	   
+  		try {
+   
+  			//in milliseconds
+  			long diff = date2.getTime() - date1.getTime();
+  			long diffDays = diff / (24 * 60 * 60 * 1000);
+  			return diffDays;
+   
+  		} catch (Exception e) {
+  			e.printStackTrace();
+  		}
+		return -1;
+    }
+    
+    public static boolean isThisDateValid(String dateToValidate){
+    	 
+		if(dateToValidate == null){
+			return false;
+		}
+ 
+		SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+		sdf.setLenient(false);
+ 
+		try {
+			//if not valid, it will throw ParseException
+			Date date = sdf.parse(dateToValidate); 
+		} catch (ParseException e) {
+			return false;
+		}
+ 
+		return true;
+	}
     
 }

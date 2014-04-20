@@ -3,6 +3,8 @@ import java.util.ArrayList;
 import ui.Interface;
 
 import domaine.Catalogue;
+import domaine.Client;
+import domaine.RegistreClient;
 
 import application.ControlleurPrincipal;
 
@@ -25,9 +27,15 @@ public class Program {
 		a2.add("Toit ouvrant");
 		c.AjouterVehicule(1, "Mazda", "3", 120, "Manuelle", 4, "FFF 123", false, a2);
 		
-		//Affiche le menu principal
-		//ControlleurPrincipal.fenetrePrincipale();
-		Interface.menuPrincipal(); // Lancement de l'application
+		// Client
+		Client client1 = new Client("ASDF1111", "Dupre", "Simon");
+		Client client2 = new Client("QWER2222", "Thivierge", "Jonathan");
+		
+		RegistreClient.getInstance().getListeContrats().add(client1);
+		RegistreClient.getInstance().getListeContrats().add(client2);
+		
+		//Afficher le menu principal
+		Interface.menuPrincipal();
 
 	}
 
