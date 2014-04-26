@@ -1,10 +1,11 @@
 package domaine;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Vehicule {
 	
-	private int tauxQuotidien = 40;	// a changer
+	private int tauxQuotidien;
 	private Integer identifiant;
 	private Integer coteClassification;
 	private Integer kilometrage;
@@ -16,6 +17,12 @@ public class Vehicule {
 	private String immatriculation;
 	private Boolean estDisponible;
 	private ArrayList<String> accessoires = new ArrayList<String>();
+	
+	public Vehicule() {
+		Random randGenerator = new Random();
+		tauxQuotidien += 50 + randGenerator.nextInt(250);		// definir le prix aleatoirement (pour fin de test)
+		kilometrage = randGenerator.nextInt(100000);	// definir le kilometrage aleatoirement (pour fin de test)
+	}
 	
 	public int getTauxQuotidien() {
 		return tauxQuotidien;

@@ -1,6 +1,7 @@
 package domaine;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import service.DateUtils;
@@ -40,15 +41,18 @@ public class Contrat {
 		
 		// Si la date correspond a aujourd'hui, creer une location
 		if (DateUtils.isToday(debut)) 
-			this.etat = new Location(v.getKilometrage());
+			etat = new Location(v.getKilometrage());
 		// sinon, reservation
 		else
-			this.etat = new Reservation();
+			etat = new Reservation();
 		
 		// creer le paiment initial du contrat
 		// on suppose le paiement acquitte
 		Paiement paiementInitial = new Paiement(calculerTotalFacture(), "Paiement initial (incluant le depot de garantie)", true);
 		listePaiements.add(paiementInitial);
+	
+		// Mettre le vehicule non disponible
+		v.setEstDisponible(false);
 	} 
 	
 	/*
@@ -66,6 +70,33 @@ public class Contrat {
 	}
 	
 	/*
+	 * Calcul la difference entre le total precedent et le nouveau total
+	 * Ajout d'un paiement au besoin
+	 * Parametre : aucun
+	 * Valeur de retour : aucune
+	 */
+	public void calculerDifferenceTotal(int fraisSpeciaux) {
+		// Obtenir le dernier total
+		Paiement p = listePaiements.get(listePaiements.size()-1);
+		// obtenir le nouveau total
+		double montant = calculerTotalFacture();
+		double diff = montant - p.getMontant();
+		Paiement nouveauPaiement = null;
+		
+		// si la difference est positive, le client doit payer pour les frais supplementaire
+		if (diff > 0)
+			nouveauPaiement = new Paiement(montant, "Nouvelle facture", false);
+		// sinon, on credite le client
+		else {
+			montant = Math.abs(montant);
+			nouveauPaiement = new Paiement(montant, "Credit", false);
+		}
+		
+		listePaiements.add(nouveauPaiement);
+		
+	}
+	
+	/*
 	 * Modifier les dates de debut et fin de la location
 	 * Parametre : date du debut / date de fin de location
 	 * Valeur de retour : aucune
@@ -73,6 +104,11 @@ public class Contrat {
 	public void modifierDates(Date dateDebut, Date dateFin) {
 		this.dateDebut = dateDebut;
 		this.dateFin = dateFin;
+		
+		// Si l'etat etait une reservation et la nouvelle date est aujourd'hui
+		// changer l'etat de reservation a location
+		if (DateUtils.isToday(dateDebut) && etat instanceof Reservation && vehicule != null)
+			etat = new Location(vehicule.getKilometrage());
 	}
 	
 	/*
@@ -81,7 +117,9 @@ public class Contrat {
 	 * Valeur de retour : aucune
 	 */
 	public void modifierVehicule(Vehicule vehiculeChoisi) {
-		this.vehicule = vehiculeChoisi;
+		vehicule.setEstDisponible(true);
+		vehiculeChoisi.setEstDisponible(false);
+		setVehicule(vehiculeChoisi);
 	}
 	
 	/*
@@ -90,9 +128,8 @@ public class Contrat {
 	 * Valeur de retour : aucune
 	 */
 	public void modifierVehiculeEtDate(Vehicule vehiculeChoisi, Date debut, Date fin) {
-		this.vehicule = vehiculeChoisi;
-		this.dateDebut = debut;
-		this.dateFin = fin;
+		modifierDates(debut, fin);
+		modifierVehicule(vehiculeChoisi);
 	}
 	
 	/*
@@ -105,6 +142,19 @@ public class Contrat {
 			Paiement nouveauPaiement = new Paiement(montant, raison, acquitte);
 			listePaiements.add(nouveauPaiement);
 		}
+	}
+	
+	/*
+	 * Met fin au contrat est remet le vehiicule disponible
+	 * Parameter : aucun
+	 * Valeur de retour : aucune
+	 */
+	public void mettreFinContrat(int kilometrage, Date dateRemise) {
+		((Location)etat).setKilometrageArrivee(kilometrage);
+		vehicule.setKilometrage(kilometrage);
+		vehicule.setEstDisponible(true);
+		setDateRemise(dateRemise);
+		setActif(false);
 	}
 	
 	/*
@@ -146,30 +196,41 @@ public class Contrat {
 	 * Valeur de retour: aucune
 	 */
 	public void calculerFraisSupplementaire() {
-		int montantDegat = (degat != null) ? degat.getMontantDegat() : 0;
-		int totalKiloGratuit = getJourLocation() * MAX_KILO_GRATUIT;
-		int intevalleKilo = ((Location) etat).getIntervalleKilometrage();
-		long totalRetard = 0;
-		long intervalleFinRemise = DateUtils.getDayInterval(getDateFin(), getDateRemise());
-		double totalMontantKilo = 0;
-		double fraisSupplementaire = 0;
-		
-		if (intervalleFinRemise > 1)
-			totalRetard = (DateUtils.getDayInterval(getDateFin(), getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
-		else if (intervalleFinRemise == 1)
-			totalRetard = (DateUtils.getHourInterval(getDateFin(), getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
-		
-		if (totalKiloGratuit > intevalleKilo) {
-			int differenceKilo = intevalleKilo - totalKiloGratuit;
-			totalMontantKilo = differenceKilo * FRAIS_DEPASSEMENT_KILO;
-		}
-		
-		fraisSupplementaire = totalRetard + totalMontantKilo + montantDegat;
-		
-		// S'il y a des frais supplementaires, ajouter un paiement
-		if (fraisSupplementaire > 0) {
-			Paiement paiementFrais = new Paiement(fraisSupplementaire, "Frais supplementaire", false);
-			listePaiements.add(paiementFrais);
+		if (etat instanceof Location) {
+			int montantDegat = (degat != null) ? degat.getMontantDegat() : 0;
+			int totalKiloGratuit = getJourLocation() * MAX_KILO_GRATUIT;
+			int intevalleKilo = ((Location) etat).getIntervalleKilometrage();
+			long totalRetard = 0;
+			long intervalleFinRemise = DateUtils.getDayInterval(getDateFin(), getDateRemise());
+			double totalMontantKilo = 0;
+			double fraisSupplementaire = 0;
+			
+			// si le retard est de plus d'une journee
+			if (intervalleFinRemise > 1)
+				totalRetard = (DateUtils.getDayInterval(getDateFin(), getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
+			// si le retard est d'une journee
+			else if (intervalleFinRemise == 1) {
+				Date debut = getDateRemise();
+				Calendar cal = Calendar.getInstance(); // locale-specific
+				cal.setTime(debut);
+				cal.set(Calendar.HOUR_OF_DAY, 0);
+				debut = cal.getTime();
+				
+				totalRetard = (DateUtils.getHourInterval(debut, getDateRemise())) * FRAIS_DEPASSEMENT_JOUR;
+			}
+			
+			if (intevalleKilo > totalKiloGratuit) {
+				int differenceKilo = intevalleKilo - totalKiloGratuit;
+				totalMontantKilo = differenceKilo * FRAIS_DEPASSEMENT_KILO;
+			}
+			
+			fraisSupplementaire = totalRetard + totalMontantKilo + montantDegat;
+			
+			// S'il y a des frais supplementaires, ajouter un paiement
+			if (fraisSupplementaire > 0) {
+				Paiement paiementFrais = new Paiement(fraisSupplementaire, "Frais supplementaire", false);
+				listePaiements.add(paiementFrais);
+			}
 		}
 	}
 	

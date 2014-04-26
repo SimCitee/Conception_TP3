@@ -28,7 +28,7 @@ public class Program {
 		c.AjouterVehicule(1, "Mazda", "3", 120, "Manuelle", 4, "FFF 123", false, a2);
 		
 		// Client
-		Client client1 = new Client("ASDF1111", "Dupre", "Simon");
+		Client client1 = new Client("1", "Dupre", "Simon");
 		Client client2 = new Client("QWER2222", "Thivierge", "Jonathan");
 		
 		RegistreClient.getInstance().getListeContrats().add(client1);

@@ -14,7 +14,7 @@ public class Location extends Etat {
 	 * Valeur de retour: intervalle
 	 */
 	public int getIntervalleKilometrage() {
-		return kilometrageArrivee - kilometrageDepart;
+		return Math.abs(kilometrageArrivee - kilometrageDepart);
 	}
 	
 	
