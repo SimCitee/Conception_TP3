@@ -18,11 +18,11 @@ public class RegistreClient {
 		return _instance;
 	}
 
-	public ArrayList<Client> getListeContrats() {
+	public ArrayList<Client> getListeClients() {
 		return listeClients;
 	}
 
-	public void setListeContrats(ArrayList<Client> listeClients) {
+	public void setListeClients(ArrayList<Client> listeClients) {
 		this.listeClients = listeClients;
 	}
 	
@@ -32,6 +32,11 @@ public class RegistreClient {
 				return c;
 		
 		return null;
+	}
+
+	public void ajouterClient(String noPermis, String nom, String prenom,
+			String adresse, String noTel, String noCarteBancaire, ArrayList<ConducteurSecondaire> listeConducteurSec) {
+		listeClients.add(new Client(noPermis, nom, prenom, adresse, noTel, noCarteBancaire, listeConducteurSec));
 	}
 	
 }

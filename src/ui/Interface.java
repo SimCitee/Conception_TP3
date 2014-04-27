@@ -61,7 +61,7 @@ public class Interface {
 			System.out.println("======== Menu principal ========");
 			
 			System.out.println("\nVeuillez choisir une des options suivantes:");
-			System.out.println("1. Gestions des utilisateurs");
+			System.out.println("1. Gestions des clients");
 			System.out.println("2. Gestion des vehicules");
 			System.out.println("3. Gestion des locations");
 			System.out.println("0. Quitter");
@@ -84,7 +84,7 @@ public class Interface {
 			case "1" :
 				clearConsole();
 				clearConsole();
-				
+				ControlleurClient.fenetrePrincipale();
 				break;
 				
 			case "2" :
