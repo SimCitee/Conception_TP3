@@ -85,26 +85,31 @@ public class ControlleurClient {
 		}
 
 	}
-
+	
 	private static void afficherClients() {
-		String estDispoSring;
+		afficherListeClients();
+		userInputScanner.getUserInput("\nAppuyer sur une touche");
+		fenetrePrincipale();
+	}
+
+	private static void afficherListeClients() {
 		RegistreClient registreClient = RegistreClient.getInstance();
-		ConsoleTableLayout layout = new ConsoleTableLayout(15, 15, 15, 30, 15, 50);
+		ConsoleTableLayout layout = new ConsoleTableLayout(15, 15, 15, 15, 15, 30, 50);
 
 		//En-tete du tableau
-		layout.newLine("No. Permis", "Nom", "Prenom", "Adresse", "No. Telephone", "Conducteurs Secondaire");
+		layout.newLine("Identifiant", "No. Permis", "Nom", "Prenom", "No. Telephone", "Adresse", "Conducteurs Secondaire");
 		
 		for (Client c : registreClient.getListeClients()) {
-			layout.newLine(c.getNoPermisConduire(),
+			layout.newLine(
+					c.getIdentifiant().toString(),
+					c.getNoPermisConduire(),
 					c.getNom(),
 					c.getPrenom(),
-					c.getAdresse(),
 					c.getNoTel(),
+					c.getAdresse(),
 					c.getConducteurSecFormate());
 					
 		}
-		userInputScanner.getUserInput("\nAppuyer sur une touche");
-		fenetrePrincipale();
 	}
 	
 	private static void ajouterClient() {
@@ -177,43 +182,91 @@ public class ControlleurClient {
 	}
 
 	private static void supprimerUnClient() {
+		
+		ConsoleHelper.printScreenSeparator("Accueil > Gestion des clients > Supprimer un client");
+		
+		//Affiche le tableau de clients
+		afficherListeClients();
+		
+		//Le client choisit par l'utilisateur
+		Client client = getClientSelonIdentifiant();
+		
+		//Si l'utilisateur a annuler l'operation
+		if(client == null)
+			fenetrePrincipale();
+		
+		//Supprime le vehicule
+		RegistreClient.getInstance().supprimerClient(client);
+		
+		System.out.println("Client supprime.");
+		fenetrePrincipale();
+		
+	}
+
+	private static Client getClientSelonIdentifiant() {
+
+		RegistreClient registreClient = RegistreClient.getInstance();
+		String identifiantStr;
+		Client client = null;
+		do
+		{
+			identifiantStr = userInputScanner.getUserInput("\nChoisir un identifiant de client (0 pour quitter)");
+			
+			//L'utilisateur annule l'operation
+			if(identifiantStr.equals("0"))
+				break;
+			
+			//Valide si un entier est entre
+			if(InputValidator.stringIsInteger(identifiantStr))
+			{
+				client = registreClient.trouverClient(Integer.parseInt(identifiantStr));
+				
+				if(client != null)
+					break;
+				
+				System.out.println("L'identifiant invalide!");
+			}
+			else
+			{
+				System.out.println("L'identifiant du client doit etre un entier!");
+			}
+		}while(true);
+		
+		
+		
+		return client;
 	}
 
 	private static void modifierClient() {
 		
-//		ConsoleHelper.printScreenSeparator("Accueil > Gestion des vehicules > Modifier un vehicule");
-//		
-//		//Affiche le tableau de vehicules
-//		afficherListeVehicules();
-//		
-//		//Le vehicule choisit par l'utilisateur
-//		Vehicule vehicule = getVehiculeSelonIdentifiant();
-//		
-//		//Si l'utilisateur a annuler l'operation
-//		if(vehicule == null)
-//			fenetrePrincipale();
-//		
-//		
-//		//Prend l'input de l'utilisateur
-//		Integer cote = getCoteVehicule();
-//		String marque = getMarque();
-//		String modele = getModele();
-//		Integer moteur = getForceMoteur();
-//		String transmission = getTransmission();
-//		Integer nbPlaces = getNbPlaces();
-//		String immatriculation = getImmatriculation();
-//		boolean estDisponible = getEstDisponible();
-//		ArrayList<String> accessoires = getAccessoires();
-//		
-//		Catalogue c = Catalogue.getInstance();
-//		
-//		c.modifierVehicule(vehicule, cote, marque, modele, moteur, transmission, nbPlaces, 
-//				immatriculation, estDisponible, accessoires);
-//		
-//		
-//		Catalogue.getInstance().afficherCatalogue();
-//		fenetrePrincipale();
+		ConsoleHelper.printScreenSeparator("Accueil > Gestion des vehicules > Modifier un client");
 		
+		//Affiche le tableau des clients
+		afficherListeClients();
+		
+		//Le client choisit par l'utilisateur
+		Client client = getClientSelonIdentifiant();
+		
+		//Si l'utilisateur a annuler l'operation
+		if(client == null)
+			fenetrePrincipale();
+		
+		//Prend l'input de l'utilisateur
+		String noPermis = getNoPermis();
+		String nom = getNom();
+		String prenom = getPrenom();
+		String adresse = getAdresse();
+		String noTel = getNoTel();
+		String noCarteBancaire = getCarteBancaire();
+		ArrayList<ConducteurSecondaire> listeConducteurSec = getConducteurSec();
+		
+		RegistreClient rc = RegistreClient.getInstance();
+		
+		rc.modifierClient(client, noPermis, nom, prenom, adresse, noTel, noCarteBancaire, listeConducteurSec);
+
+		System.out.println("Client ajoute.");
+		userInputScanner.getUserInput("\nAppuyer sur une touche");
+		fenetrePrincipale();	
 	}
 
 

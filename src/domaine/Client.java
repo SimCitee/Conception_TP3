@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 public class Client {
 
+	private Integer identifiant;
+	private static Integer idCompteur = 0;
 	private String noPermisConduire;
 	private String nom;
 	private String prenom;
@@ -13,6 +15,7 @@ public class Client {
 	private ArrayList<ConducteurSecondaire> listeConducteurSec;
 
 	public Client(String noPermisConduire, String nom, String prenom, String adresse, String noTel, String noCarteBancaire, ArrayList<ConducteurSecondaire> listeConducteurSec) {
+		identifiant = ++idCompteur;
 		this.noPermisConduire = noPermisConduire;
 		this.nom = nom;
 		this.prenom = prenom;
@@ -91,5 +94,13 @@ public class Client {
 
 	public void setListeConducteurSec(ArrayList<ConducteurSecondaire> listeConducteurSec) {
 		this.listeConducteurSec = listeConducteurSec;
+	}
+
+	public Integer getIdentifiant() {
+		return identifiant;
+	}
+
+	public void setNoCarteBancaire(String noCarteBancaire) {
+		this.noCarteBancaire = noCarteBancaire;
 	}
 }
