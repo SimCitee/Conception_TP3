@@ -75,7 +75,7 @@ public class ControlleurLocation {
 	 * Valeur de retour: aucune
 	 */
 	public static void saisirFinLocation() {
-		String choixUtilisateur;
+		boolean kiloValide = false;
 		Contrat contrat = obtenirContratParId();
 		int kiloRemise = 0;
 		
@@ -83,7 +83,13 @@ public class ControlleurLocation {
 			
 			do {
 				kiloRemise = obtenirKilometrage();
-			} while (kiloRemise <= ((Location)contrat.getEtat()).getKilometrageDepart());
+				int kiloDepart = ((Location)contrat.getEtat()).getKilometrageDepart();
+				kiloValide = kiloRemise <= kiloDepart;
+				
+				if (!kiloValide)
+					System.out.println("Veuillez entrer un kilometrage superieur au kilometrage de depart ("+ kiloDepart +")");
+				
+			} while (kiloValide == false);
 			Date dateRemise = obtenirDate("Veuillez entrer la date de remise: ");
 			
 			ControlleurLocation.terminerLocation(contrat, kiloRemise, dateRemise);
@@ -101,13 +107,19 @@ public class ControlleurLocation {
 	 * Valeur de retour: la date saisie
 	 */
 	private static Date obtenirDate(String info) {
+		boolean dateValide = false;
 		String input = "";
 		SimpleDateFormat format = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 			
 		do {
 			System.out.print(info + " (MM/JJ/AAAA HH:mm:ss)");
 			input = Interface.lecture();
-		} while (DateUtils.isThisDateValid(input) == false);
+			dateValide = DateUtils.isThisDateValid(input);
+			
+			if(!dateValide)
+				System.out.println("Date invalide. Veuillez entrer une date dans le format specifier.");
+			
+		} while (dateValide == false);
 		
 		Date dt = null;
 		

@@ -1,10 +1,13 @@
 package domaine;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 import service.DateUtils;
+import ui.Interface;
 
 public class Contrat {
 	private static int compteurContrat = 0;
@@ -55,6 +58,16 @@ public class Contrat {
 		v.setEstDisponible(false);
 	} 
 	
+	
+	/*
+	 * Validation des dates
+	 * Parametre : date de debut, date de fin
+	 * Valeur de retour : booleen
+	 */
+	public boolean validerDates(Date debut, Date fin) {
+		return (DateUtils.isAfterDay(fin, debut)) ? true : false;
+	}
+	
 	/*
 	 * Calcul du total de la facture (fait au moment de la location)
 	 * Parametre : aucun
@@ -102,13 +115,15 @@ public class Contrat {
 	 * Valeur de retour : aucune
 	 */
 	public void modifierDates(Date dateDebut, Date dateFin) {
-		this.dateDebut = dateDebut;
-		this.dateFin = dateFin;
-		
-		// Si l'etat etait une reservation et la nouvelle date est aujourd'hui
-		// changer l'etat de reservation a location
-		if (DateUtils.isToday(dateDebut) && etat instanceof Reservation && vehicule != null)
-			etat = new Location(vehicule.getKilometrage());
+		if (validerDates(dateDebut, dateFin)) { 
+			this.dateDebut = dateDebut;
+			this.dateFin = dateFin;
+			
+			// Si l'etat etait une reservation et la nouvelle date est aujourd'hui
+			// changer l'etat de reservation a location
+			if (DateUtils.isToday(dateDebut) && etat instanceof Reservation && vehicule != null)
+				etat = new Location(vehicule.getKilometrage());
+		}
 	}
 	
 	/*
